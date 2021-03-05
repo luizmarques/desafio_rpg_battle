@@ -60,6 +60,15 @@ class Filters extends BaseConfig
 	 * @var array
 	 */
 	public $filters = [
-		'oauthfilter' => ['before' => ['personagens','personagens/*', 'partidas', 'partidas/*']]
+		'oauthfilter' => [
+			'before' => [
+				'personagens',
+				'personagens/*', 
+				'partidas', 
+				'partidas/*',
+				'combates',
+				'combates/*',
+			]
+		]
 	];
 }

@@ -33,9 +33,13 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 //$routes->get('/', 'Home::index');
-//$routes->post('/partidas/iniciar', 'Partidas::iniciar');
+$routes->post('/partidas/iniciar', 'Partidas::iniciar');
+$routes->post('/iniciativas/iniciar', 'Iniciativas::iniciar');
+$routes->post('/combates/atacar', 'Combates::atacar');
+$routes->get('/rankings', 'Rankings::index');
 
-$routes->resource('partidas');
+//$routes->resource('partidas');
+//$routes->resource('iniciativas');
 
 /*
  * --------------------------------------------------------------------

@@ -4,11 +4,13 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\Personagens as PersonagensModel;
-use App\Models\Oauthaccesstoken as OauthaccesstokenModel;
 use Ramsey\Uuid\Uuid;
+use App\Traits\UserTrait;
 
 class Partidas extends ResourceController
 {
+	use UserTrait;
+	
 	protected $modelName = 'App\Models\Partidas';
 	protected $format = 'json';
 	
@@ -24,9 +26,8 @@ class Partidas extends ResourceController
 		if(!$this->validate($rules)){
 			return $this->fail($this->validator->getErrors());
 		}else{
-			$token = $this->request->getHeader("Authorization")->getValue();
-			$oauthaccesstokenModel = new OauthaccesstokenModel();
-			$user = $oauthaccesstokenModel->find(str_replace('Bearer ' ,  '' , $token));
+			
+			$user = $this->getUserByToken($this->request);
 			if(!count($this->model->where(['username' => $user['user_id'], "finalizada" => 0])->findAll()))
 			{
 				$personagensModel = new PersonagensModel();
