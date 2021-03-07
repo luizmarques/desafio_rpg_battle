@@ -61,8 +61,8 @@ Para teste, foi criado um usuário chamado `teste` com a senha `teste`, outros u
 ### Request
 ```json
 {
-    "nick": "GordinH",
-    "heroi": "d13cf4a5-c502-464c-aae4-3ab0c79fb24c"
+    "nick": "string",
+    "heroi": "guid"
 }
 ```
 ### Response
@@ -139,8 +139,14 @@ Para teste, foi criado um usuário chamado `teste` com a senha `teste`, outros u
 ```json
 {
     "message": "string",
-    "combate_log": "array"
-}
+    "combate_log": [
+    {
+        "atacante": "string",
+        "ataque": "integer",
+        "defesa": "integer",
+        "dano": "integer",
+        "pdv do defensor": "integer"
+    }
 ```
 #### Status: 400 - Bad Request
 ```json
