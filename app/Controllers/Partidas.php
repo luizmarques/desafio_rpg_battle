@@ -14,7 +14,11 @@ class Partidas extends ResourceController
 	protected $modelName = 'App\Models\Partidas';
 	protected $format = 'json';
 	
-	//Iniciar uma partida.
+	/**
+	 *Inicia e registra uma partida para o jogador.
+	* 
+	* @return JsonResponse
+	*/
 	public function iniciar(){
 		helper(["form"]);
 		

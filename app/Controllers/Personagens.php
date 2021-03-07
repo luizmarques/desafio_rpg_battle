@@ -9,6 +9,11 @@ class Personagens extends ResourceController
 	protected $modelName = 'App\Models\Personagens';
 	protected $format = 'json';
 
+	/**
+	 * Retorna os personagens do banco de dados.
+	 * 
+	 * @return JsonResponse
+	*/
 	public function herois()
 	{
 		$personagens = $this->model->where('natureza', 1)->findAll();

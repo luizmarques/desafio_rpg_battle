@@ -19,7 +19,11 @@ class Combates extends ResourceController
 	protected $modelName = 'App\Models\CombateLogs';
 	protected $format = 'json';
 	
-	//Atacar adversário.
+	/**
+	 * Atacar adversário.
+	 * 
+     * @return JsonResponse
+     */
 	public function atacar(){
 		$user = $this->getUserByToken($this->request);
 
@@ -32,6 +36,11 @@ class Combates extends ResourceController
 			$personagensModel = new PersonagensModel();
 			$rankingsModel = new RankingsModel();
 
+			/**
+			 * 
+			 * Consuta iniciativas roladas.
+			 * 
+			*/
 			$iniciativa = $iniciativasModel->where("partida", $partida[0]['partida'])->findAll();
 			if(!count($iniciativa)) {
 				return $this->fail(json_encode(["message" => "Não existe iniciativa rolada para a partida"]));
@@ -39,15 +48,30 @@ class Combates extends ResourceController
 
 			$monstro = $personagensModel->where('personagem', $partida[0]["monstro"])->findAll()[0];
 			$heroi = $personagensModel->where('personagem', $partida[0]["heroi"])->findAll()[0];
-
+			
+			/**
+			 * 
+			 * Ordena iniciativas para definir o primeiro atacante.
+			 * Realiza o ataque de acordo com as iniciativas.
+			 * Calcula dano recebido nos turnos anteriores
+			 * Ordena e manipula um array para gerir os ataques até que um dos adversários chegue a 0 Pdv.
+			 * Cria um registro de todos os ataques no Combat_Log.
+			 * Manipula e registra o Ranking dos jogadores.
+			 * Imprime em tela o resultado do combate e rankgs para o jogador.
+			 * 
+			*/
 			$filaAtaque = [];
 			$iniciativa[0]["ordem"] == 1 ? array_push($filaAtaque, $heroi, $monstro) : array_push($filaAtaque, $monstro, $heroi);
-			$turnos = 0;
 			
 			$atacante = 0;
 			$defensor = 1;
 			$combateLog = [];
-			while($filaAtaque[$atacante]["pdv"] > 0) {
+			$rodada = 1;
+			
+			while($filaAtaque[$atacante]["pdv"] > 0 && $rodada <= 2) {
+				$danoDefensor = $combateLogsModel->getDanoAplicado($partida[0]['partida'], $filaAtaque[$atacante]["personagem"]);
+				$filaAtaque[$defensor]["pdv"] -= $danoDefensor;
+				
 				$ataque = $filaAtaque[$atacante]["forca"] + $filaAtaque[$atacante]["agilidade"] + rand(1, 10);
 				$defesa = $filaAtaque[$defensor]["defesa"] + $filaAtaque[$defensor]["agilidade"] + rand(1, 10);
 
@@ -82,32 +106,47 @@ class Combates extends ResourceController
 				$aux = $atacante;
 				$atacante = $defensor;
 				$defensor = $aux;
-				$turnos++;
+				$rodada++;
 			}
+			
+			if($filaAtaque[$atacante]["pdv"] <= 0) {
+				$partidasModel->update($partida[0]["partida"], ["finalizada" => 1]);
 
-			$ganhador = $filaAtaque[$defensor];
-			$ranking = $rankingsModel->where('username', $user['user_id'])->findAll(); 
-
-			if($filaAtaque[$defensor]["natureza"] == 1){
-				if(count($ranking)) {
-					$rankingsModel->update($ranking[0]["ranking"],[
-						"pontuacao" => $ranking[0]["pontuacao"] + (100 - ceil($turnos / 2))
-					]);
+				$ganhador = $filaAtaque[$defensor];
+				$ranking = $rankingsModel->where('username', $user['user_id'])->findAll(); 
+	
+				if($filaAtaque[$defensor]["natureza"] == 1){
+					$rodadas = $combateLogsModel->getRodadas($partida[0]['partida']);
+					if(count($ranking)) {
+						$rankingsModel->update($ranking[0]["ranking"],[
+							"pontuacao" => $ranking[0]["pontuacao"] + (100 - $rodadas)
+						]);
+					} else {
+						$rankingsModel->insert([
+							"ranking" => Uuid::uuid4(),
+							"pontuacao" => 100 - $rodadas,
+							"username" => $user['user_id']
+						]);
+					}
+	
+					$response["message"] = "O jogador ganhou a partida!";
 				} else {
-					$rankingsModel->insert([
-						"ranking" => Uuid::uuid4(),
-						"pontuacao" => 100 - ceil($turnos / 2),
-						"username" => $user['user_id']
-					]);
-				}
+					if(!count($ranking)) {
+						$rankingsModel->insert([
+							"ranking" => Uuid::uuid4(),
+							"pontuacao" => 0,
+							"username" => $user['user_id']
+						]);
+					}
 
-				$response["message"] = "O jogador ganhou a partida!";
+					$response["message"] = "O jogador perdeu a partida!";
+				}
 			} else {
-				$response["message"] = "O jogador perdeu a partida!";
+				$response["message"] = "Role seu ataque novamente!";
 			}
 
 			$response["combate_log"] = $combateLog;
-			
+
 			return $this->respondCreated($response);
 		} else {
 			return $this->fail(json_encode(["message" => "Não existe partida iniciada para o usuário"]));

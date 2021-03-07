@@ -15,7 +15,11 @@ class Iniciativas extends ResourceController
 	protected $modelName = 'App\Models\Iniciativas';
 	protected $format = 'json';
 	
-	//Criando Iniciativa.
+	/**
+	 * Define iniciativas para os personages de acordo com a regra de negócios
+	 * 
+     * @return JsonResponse
+     */
 	public function iniciar(){
 		$user = $this->getUserByToken($this->request);
 

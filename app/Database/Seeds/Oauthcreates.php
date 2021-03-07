@@ -6,9 +6,15 @@ use CodeIgniter\Database\Seeder;
 
 class Oauthcreates extends Seeder
 {
+	/**
+	 * inserção da aplicação cliente do auth.
+	 * inserção do usuario para o cliente cadastrado acima.
+	 * 
+	 * @return JsonResponse
+	*/
 	public function run()
 	{
-		//inserção da aplicação cliente do auth
+		
 		$client = model('Oauth_clients');
 		
 		$client->insert([
@@ -18,7 +24,6 @@ class Oauthcreates extends Seeder
 			'scope' => 'app',
 		]);
 		
-		//inserção do usuario para o cliente cadastrado acima
 		$model = model('Oauth_users');
 		
 		$model->insert([
