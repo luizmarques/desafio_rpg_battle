@@ -77,7 +77,7 @@ Para teste, foi criado um usuário chamado `teste` com a senha `teste`, outros u
     "username": "string"
 }
 ```
-#### Status: 400 - OK
+#### Status: 400 - Bad Request
 ```json
 {
     "status": "integer",
@@ -111,7 +111,7 @@ Para teste, foi criado um usuário chamado `teste` com a senha `teste`, outros u
     "monstro_iniciativa": "integer"
 }
 ```
-#### Status: 400 - OK
+#### Status: 400 - Bad Request
 ```json
 {
     "status": "integer",
@@ -142,7 +142,7 @@ Para teste, foi criado um usuário chamado `teste` com a senha `teste`, outros u
     "combate_log": "array"
 }
 ```
-#### Status: 400 - OK
+#### Status: 400 - Bad Request
 ```json
 {
     "status": "integer",
