@@ -6,12 +6,12 @@ Criar uma simulação de um combate de RPG entre Heróis e Monstros.
 
 ## Instalação
 
-- Executar no terminar com a pasta do projeto selecionado: `composer install`
+- Executar no terminal com a pasta do projeto selecionado: `composer install`
 - Criar banco de dados chamado "rpg_battle"
 - Duplicar arquiv `env` para `.env`
 - Configurar usuário de banco de dados nos arquivos `app/Config/Database.php` e `.env`
-- Executar no terminar com a pasta do projeto selecionado: `php spark migrate`
-- Executar no terminar com a pasta do projeto selecionado: `php spark db:seed Oauthcreates` e  `php spark db:seed Personagenscreates`
+- Executar no terminal com a pasta do projeto selecionado: `php spark migrate`
+- Executar no terminal com a pasta do projeto selecionado: `php spark db:seed Oauthcreates` e  `php spark db:seed Personagenscreates`
 
 ## Background
 
